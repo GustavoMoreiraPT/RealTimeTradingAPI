@@ -41,6 +41,8 @@ class StockGateway{
 
     string fetchRealTimeStockValueBySymbol(string& symbol);
   
+  	string fetchRealTimeStockValueBySymbol(string& symbol, string& timeOfDay);
+  
   	int getApiCalls();
   	void incrementApiCalls();
   

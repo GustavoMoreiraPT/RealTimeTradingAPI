@@ -14,9 +14,17 @@ namespace StockController{
     auto collectedId = request.param(":name").as<string>();
 
     StockGateway gateway = StockGateway();
-    cout << "Going to grab the value from the external API";
     auto result = gateway.fetchRealTimeStockValueBySymbol(collectedId);
     gateway.incrementApiCalls();
+    response.send(Http::Code::Ok, result);
+  }
+  
+  void getStockSymbolByTimeOfDay(const Rest::Request& request, Http::ResponseWriter response){
+  	auto collectedId = request.param(":name").as<string>();
+    auto collectedTimeOfDay = request.param(":timeofday").as<string>();
+    
+    StockGateway gateway = StockGateway();
+    auto result = gateway.fetchRealTimeStockValueBySymbol(collectedId, collectedTimeOfDay);
     response.send(Http::Code::Ok, result);
   }
 
@@ -27,14 +35,15 @@ namespace StockController{
 
 int main() {
   
-  cout << "Listening on port 9080";
+  cout << "Listening on port 9081";
   
   Rest::Router router;
   
   Routes::Get(router, "/stock/:name", Routes::bind(&StockController::getStockSymbol));
+  Routes::Get(router, "/stock/:name/:timeofday", Routes::bind(&StockController::getStockSymbolByTimeOfDay));
   Routes::Get(router, "/hello", Routes::bind(&StockController::helloMethod));
   
-  Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(9080));
+  Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(9081));
 
   auto opts = Http::Endpoint::options().threads(1);
   Http::Endpoint server(addr);
