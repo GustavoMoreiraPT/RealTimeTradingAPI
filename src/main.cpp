@@ -2,8 +2,6 @@
 #include <pistache/endpoint.h>
 #include <pistache/router.h>
 
-#include "Symbol.cpp"
-//#include "StockController.cpp"
 #include "StockGateway.cpp"
 
 using namespace Pistache;
@@ -17,7 +15,8 @@ namespace StockController{
 
     StockGateway gateway = StockGateway();
     cout << "Going to grab the value from the external API";
-    auto result = gateway.FetchRealTimeStockValueBySymbol(collectedId);
+    auto result = gateway.fetchRealTimeStockValueBySymbol(collectedId);
+    gateway.incrementApiCalls();
     response.send(Http::Code::Ok, result);
   }
 
@@ -28,18 +27,14 @@ namespace StockController{
 
 int main() {
   
-  Symbol symbolToEvaluate("TSLA", "TESLA", "$", 500.60f);
-  
-  cout << symbolToEvaluate.getFullName();
-  
-  cout << "Listening on port 9082";
+  cout << "Listening on port 9080";
   
   Rest::Router router;
   
   Routes::Get(router, "/stock/:name", Routes::bind(&StockController::getStockSymbol));
   Routes::Get(router, "/hello", Routes::bind(&StockController::helloMethod));
   
-  Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(9085));
+  Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(9080));
 
   auto opts = Http::Endpoint::options().threads(1);
   Http::Endpoint server(addr);
