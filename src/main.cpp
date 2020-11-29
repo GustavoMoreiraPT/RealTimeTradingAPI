@@ -1,15 +1,30 @@
+#include <pistache/http.h>
 #include <pistache/endpoint.h>
+#include <pistache/router.h>
+
 #include "Symbol.cpp"
-#include "StockController.cpp"
+//#include "StockController.cpp"
+#include "StockGateway.cpp"
 
 using namespace Pistache;
+using namespace Rest;
 
-struct HelloHandler : public Http::Handler {
-  HTTP_PROTOTYPE(HelloHandler)
-  void onRequest(const Http::Request&, Http::ResponseWriter writer) override{
-    writer.send(Http::Code::Ok, "Hello, World!");
+
+namespace StockController{
+  
+  void getStockSymbol(const Rest::Request& request, Http::ResponseWriter response){
+    auto collectedId = request.param(":name").as<string>();
+
+    StockGateway gateway = StockGateway();
+    cout << "Going to grab the value from the external API";
+    auto result = gateway.FetchRealTimeStockValueBySymbol(collectedId);
+    response.send(Http::Code::Ok, result);
   }
-};
+
+  void helloMethod(const Rest::Request& request, Http::ResponseWriter response){
+      response.send(Http::Code::Ok, "Hello, World!");
+  }
+}
 
 int main() {
   
@@ -19,18 +34,17 @@ int main() {
   
   cout << "Listening on port 9082";
   
-  Http::Router router;
+  Rest::Router router;
   
-  Routes::Get(router, "/stock", Routes::bind(&StockController::getStockSymbol, this));
-  Routes::Get(router, "/hello", Routes::bind(&StockController::helloMethod, this));
+  Routes::Get(router, "/stock/:name", Routes::bind(&StockController::getStockSymbol));
+  Routes::Get(router, "/hello", Routes::bind(&StockController::helloMethod));
   
-  Net::Address addr(Net::Ipv4::any(), Net::Port(9080));
+  Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(9085));
 
   auto opts = Http::Endpoint::options().threads(1);
   Http::Endpoint server(addr);
   server.init(opts);
   server.setHandler(router.handler());
-  
-  //server.setHandler(std::make_shared<HelloHandler>());
+
   server.serve();
 }

@@ -1,15 +1,16 @@
 #include "StockGateway.h"
 
 using namespace std;
-using namespace boost::network;
-using namespace boost::network::http;
+
+#include <cpr/cpr.h>
 
 string StockGateway::FetchRealTimeStockValueBySymbol(string symbol){
-	client::request request_("http://api.marketstack.com/v1/eod?access_key=52d803d632fff0ee40963c04bd5c5b21&symbols=" + symbol);
-    request_ << header("Connection", "close");
-    client client_;
-    client::response response_ = client_.get(request_);
-    std::string body_ = body(response_);
+	cpr::Response r = cpr::Get(cpr::Url{"http://api.marketstack.com/v1/eod?access_key=52d803d632fff0ee40963c04bd5c5b21&symbols=" + symbol});
+    r.status_code;                  // 200
+    r.header["content-type"];       // application/json; charset=utf-8
+    r.text;   
+  
+  return r.text;
 }
   
  
