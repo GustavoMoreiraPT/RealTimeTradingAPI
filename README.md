@@ -65,5 +65,23 @@ In order to run this project, the following steps are required
 After executing these steps, you should see the result from the latest stock exchange of NASDAQ for the TSLA symbol. 
 Please not that you can use any symbol that you like.
 
+## Code explanation
+At the current moment, this API is still very simple. The logic is divided into two main components:
+
+- **main.cpp** - this class instantiate the Pistache routes for the endpoints, and handles the responsability of the requests by creating instances of StockGateway classes.
+- **StockGateway.h and StockGateway.cpp** - Process the requests from the user by encapsulating the logic of calling an external API to retrieve stock values.
+
+## Rubric Points Accessment
+In this section it's discussed how to project accomplishes the 5 required rubric points from Udacity to pass the Capstone Project.
+
+1 - In Object Oriented Programming, for the Criteria "The project uses Object Oriented Programming Techniques", the class definition and it's implementation of StockGateway, divided between files StockGateway.h and StockGateway.cpp, satisfy this criteria.
+2 - In Object Oriented Programming, for the Criteria "Classes use appropriate access specifiers for class members", the criteria is also satisfied. In StockGateway.h, there is a clear separation between private and public members.
+3 - In Object Oriented Programming, for the Criteria "Classes abstract implementation details from their interfaces" is also satisfied, since the method names are clean and do not pass details on hoe the "task" is being done. For example, in StockGateway.cpp, the method "fetchRealTimeStockValueBySymbol" provides a clear intention to the developer that decides to use the method, and it hides all the implementation details. For example, the method signature never says to the developer that is going to use Cpr library to call an external api. For what is worth, the method could have been fetching the stock value from a local database and the developer would never know.
+4 - In Object Oriented Programming, for the Criteria "Classed encapsulate behavior" is also satisfied. In StockGateway.h there is a private variavle "apiCalls" that cannot be directly access through it's callers, only though member functions "getApiCalls()" to read the current value, or to increment the current value by one by using the function "incrementApiCalls".
+5 - In Object Oriented Programming, for the Criteria "Overloaded functions allow the same function to operate on different parameters" is also satisfied. In StockGateway.h, there are two different method signatures for the same function "fetchRealTimeStockValueBySymbol" (lines 42 and 44). One of the signatures receives only one string, while the other one receives two strings.
+6 - In Memory Management, for the Criteria "The project makes use of references in function declarations", both methods "fetchRealTimeStockValueBySymbol" receive a reference string instead of a value string.
+7 - In Memory Management, for the Criteria "The project follows the Rule of 5", the class defined in StockGateway.h uses the rule of 5 by defining all possible constructors, copy constructors and move operators.
+
+
 
 
